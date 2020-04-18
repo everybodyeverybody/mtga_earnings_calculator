@@ -10,8 +10,9 @@ from mtga_event_prize_level import EventPrizeLevel
 
 class EventStructure:
     name: str
-    matches: int
-    rounds_per_match: int
+    matches: Decimal
+    losses: Decimal
+    rounds_per_match: Decimal
     prizes: List[EventPrizeLevel]
     gold_entry_fee: Optional[int]
     gems_entry_fee: Optional[int]
@@ -57,9 +58,9 @@ class EventStructure:
 
         self.name = name
         self.matches = convert_to_decimal(matches)
+        self.losses = convert_to_decimal(losses)
         self.rounds_per_match = convert_to_decimal(rounds_per_match)
         self.prizes = prizes
-        self.losses = losses
         if gold_entry_fee:
             self.gold_entry_fee = convert_to_decimal(gold_entry_fee)
         if gems_entry_fee:
