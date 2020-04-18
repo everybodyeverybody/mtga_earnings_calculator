@@ -161,7 +161,7 @@ def main() -> None:
         gold_entry_fee=10000,
         gems_entry_fee=1500,
     )
-    prizes = calculate_prizes(traditional_ikora_draft, trials=10)
+    prizes = calculate_prizes(traditional_ikora_draft)
     calculate_earnings(traditional_ikora_draft, prizes)
 
 
