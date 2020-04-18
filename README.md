@@ -4,7 +4,7 @@ I wanted to write something to calculate my EV/Earnings in Magic without using E
 I am a losing player in limited formats, so I wanted to see what generally would be my expected return on firing them off, and also compare what my ROI would be depending on the event. The things you do when you're pinching pennies.
 
 ## Requirements
-python3.7 
+python3.7 and the black formatting library
 
 ## Setup
 
