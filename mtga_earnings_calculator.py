@@ -1,15 +1,19 @@
 #!/usr/bin/env python3.7
 import random
 from decimal import Decimal
+from typing import Union, List
+
+# local imports
 from mtga_pricing_model import PricingModel
 from mtga_event_structure import EventStructure
 from mtga_event_prize_level import EventPrizeLevel
 
-# i got tired so this is not done in the way i would typically do code
-# see the other classes for more of what i do
 
-
-def compare_entry_fees(gold, gems, pricing_model):
+def compare_entry_fees(
+    gold: Union[int, str, float, Decimal],
+    gems: Union[int, str, float, Decimal],
+    pricing_model: PricingModel,
+) -> Decimal:
     if gold:
         gold_fee_in_currency = pricing_model.convert_gold_to_local_currency(gold)
     else:
@@ -22,13 +26,25 @@ def compare_entry_fees(gold, gems, pricing_model):
 
     if gems_fee_in_currency and gold_fee_in_currency:
         if gems_fee_in_currency < gold_fee_in_currency:
-            print("Buying in with gems is cheaper: {} currency {} gems < {} currency {} gold".format(gems_fee_in_currency,gems,gold_fee_in_currency,gold))
+            print(
+                "Buying in with gems is cheaper: {} currency {} gems < {} currency {} gold".format(
+                    gems_fee_in_currency, gems, gold_fee_in_currency, gold
+                )
+            )
             return gems_fee_in_currency
         elif gold_fee_in_currency < gems_fee_in_currency:
-            print("Buying in with gold is cheaper: {} currency {} gold < {} currency {} gems".format(gold_fee_in_currency,gold,gems_fee_in_currency,gems))
+            print(
+                "Buying in with gold is cheaper: {} currency {} gold < {} currency {} gems".format(
+                    gold_fee_in_currency, gold, gems_fee_in_currency, gems
+                )
+            )
             return gold_fee_in_currency
         else:
-            print("No preference, defaulting to gems: {} currency {} gems".format(gems_fee_in_currency,gems))
+            print(
+                "No preference, defaulting to gems: {} currency {} gems".format(
+                    gems_fee_in_currency, gems
+                )
+            )
             return gems_fee_in_currency
 
     if gems_fee_in_currency:
@@ -39,7 +55,7 @@ def compare_entry_fees(gold, gems, pricing_model):
     raise RuntimeError("Something weird happened to get here")
 
 
-def calculate_earnings(event, prizes):
+def calculate_earnings(event, prizes: List[EventPrizeLevel]) -> None:
     pricing_model = PricingModel(local_currency="usd")
     entry_fee_in_currency = compare_entry_fees(
         event.gold_entry_fee, event.gems_entry_fee, pricing_model
@@ -55,26 +71,35 @@ def calculate_earnings(event, prizes):
         total_buyins += entry_fee_in_currency
         buyin_count += 1
     average_winnings_per_buyin = total_winnings / Decimal(buyin_count)
-    total_earnings =  total_winnings - total_buyins
+    total_earnings = total_winnings - total_buyins
     ev = average_winnings_per_buyin - entry_fee_in_currency
 
-    print("Single Buyin Costs: {}".format(entry_fee_in_currency)) 
-    print("Total Buyins ({}): {}".format(buyin_count,total_buyins))
+    print("Single Buyin Costs: {}".format(entry_fee_in_currency))
+    print("Total Buyins ({}): {}".format(buyin_count, total_buyins))
     print("Total Winnings: {}".format(total_winnings))
     print("Total Earnings: {}".format(total_earnings))
     print("Average Winnings Per Buyin: {}".format(average_winnings_per_buyin))
     print("EV: {}".format(ev))
 
 
-def zero_match_loss_tracker(match_count, match_losses, event_matches, event_losses):
+def zero_match_loss_tracker(
+    match_count: int, match_losses: int, event_matches: int, event_losses: int
+) -> bool:
     return match_count < event_matches
 
 
-def regular_match_loss_tracker(match_count, match_losses, event_matches, event_losses):
+def regular_match_loss_tracker(
+    match_count: int, match_losses: int, event_matches: int, event_losses: int
+) -> bool:
     return match_losses < event_losses and match_count < event_matches
 
 
-def calculate_prizes(event, trials=10000, win_rate_percentage=50, print_records=False):
+def calculate_prizes(
+    event: EventStructure,
+    trials: int = 10000,
+    win_rate_percentage: int = 50,
+    print_records: bool = False,
+) -> List[EventPrizeLevel]:
     if win_rate_percentage > 100 or win_rate_percentage < 1:
         print("defaulting win rate percentage to 50")
         win_rate_percentage = 50
@@ -119,7 +144,7 @@ def calculate_prizes(event, trials=10000, win_rate_percentage=50, print_records=
     return prizes_won
 
 
-def main():
+def main() -> None:
     traditional_ikora_draft_prizes = [
         EventPrizeLevel(packs=1),
         EventPrizeLevel(packs=1),
@@ -136,7 +161,7 @@ def main():
         gold_entry_fee=10000,
         gems_entry_fee=1500,
     )
-    prizes = calculate_prizes(traditional_ikora_draft, trials=5)
+    prizes = calculate_prizes(traditional_ikora_draft, trials=10)
     calculate_earnings(traditional_ikora_draft, prizes)
 
 

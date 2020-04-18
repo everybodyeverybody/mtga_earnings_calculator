@@ -118,7 +118,7 @@ class PricingModel:
             * self.pricing_reference[self.local_currency]["per_pack"]
         )
 
-    def run_tests(self):
+    def run_tests(self) -> None:
         """Probably should figure out a better way to test this, but that's later.
         USD is the default because our failed nation is still #1! USA! USA!"""
         print("1000 gold : ${}".format(self.convert_gold_to_local_currency(1000)))
